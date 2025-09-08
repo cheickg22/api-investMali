@@ -1,0 +1,207 @@
+spring:
+  application:
+    name: InvestMali
+  profiles:
+    active: dev
+  jackson:
+    time-zone: Africa/Bamako
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+  mvc:
+    throw-exception-if-no-handler-found: true 
+  web:
+    resources:
+      add-mappings: false
+  jpa:
+    open-in-view: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    # Par défaut: pas d'identifiants ici (à fournir par profil ou variables d'environnement)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate.SQL: off
+    org.springframework.web: info
+
+# Quotas par défaut (profil par défaut)
+app:
+  rate-limit:
+    capacity: 100
+    refill-tokens: 100
+    refill-period-seconds: 60
+  security:
+    jwt:
+      # Re-map pour compatibilité avec JwtUtil (@Value("${app.security.jwt.secret}"))
+      # On réutilise la valeur déjà définie en haut: security.jwt.secret
+      secret: ${security.jwt.secret}
+      expiration-ms: 3600000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    health:
+      show-details: when_authorized
+
+security:
+  jwt:
+    # Clé HS256 en base64 pour DEV (à changer en local si besoin)
+    secret: bXlkZXZzZWNyZXRsb25nc2VjcmV0YmFzZTY0dmFsaWRrZXk=
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:investmali;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/apimaliNew?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Africa%2FBamako&createDatabaseIfNotExist=true
+    username: root
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:abdaty11@gmail.com}
+    from: ${MAIL_FROM:${spring.mail.username}}
+    password: ${MAIL_PASSWORD:lyiv qoia uwep xrqj}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+app:
+  cors:
+    # Origines de développement (exemple: React/Angular locaux)
+    allowed-origins: http://localhost:3000,http://localhost:4200,http://localhost:5173
+  rate-limit:
+    capacity: 200
+    refill-tokens: 200
+    refill-period-seconds: 60
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+server:
+  port: ${PORT:8080}
+security:
+  jwt:
+    # Fournir via variable d'environnement JWT_SECRET_BASE64
+    secret: ${JWT_SECRET_BASE64}
+app:
+  cors:
+    # Remplacer par vos domaines de production quand disponibles
+    allowed-origins: https://app.example.com,https://admin.example.com
+  rate-limit:
+    capacity: 100
+    refill-tokens: 100
+    refill-period-seconds: 60
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:transmali_test;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: false
+
+# Tests: valeurs par défaut; les tests peuvent override via @SpringBootTest(properties)
+app:
+  rate-limit:
+    capacity: 100
+    refill-tokens: 100
+    refill-period-seconds: 60
+
+
+# src/main/resources/application.yml
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+logging.level.org.springframework.mail: DEBUG
+spring.mail.properties.mail.debug: true

@@ -1,0 +1,105 @@
+package abdaty_technologie.API_Invest.Entity;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import abdaty_technologie.API_Invest.Entity.Enum.AntenneAgents;
+import abdaty_technologie.API_Invest.Entity.Enum.Civilites;
+import abdaty_technologie.API_Invest.Entity.Enum.Nationalites;
+import abdaty_technologie.API_Invest.Entity.Enum.Roles;
+import abdaty_technologie.API_Invest.Entity.Enum.Sexes;
+import abdaty_technologie.API_Invest.Entity.Enum.SituationMatrimoniales;
+import abdaty_technologie.API_Invest.Entity.Enum.TypePersonnes;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+public class Persons extends BaseEntity {
+
+    @Column(name="nom", nullable = false, length = 100)
+    @NotEmpty
+    private String nom; 
+    
+    @Column(name="prenom", nullable = false)
+    @NotEmpty
+    private String prenom; 
+    
+    @Column(name="email", nullable = false, unique = true)
+    @NotEmpty
+    private String email;
+    
+    @Column(name="telephone1", nullable = false, unique = true)
+    private String telephone1; 
+    
+    @Column(name="telephone2", nullable = true, unique = true)
+    private String telephone2;
+
+    @Column(name="date_naissance", nullable = false)
+    private Date dateNaissance;
+    
+    @Column(name="lieu_naissance", nullable = false)
+    private String lieuNaissance;
+
+    @Column(name="est_autoriser", nullable = false)
+    private Boolean estAutoriser;
+
+    @Column(name="nationalite", nullable = false)
+    @Enumerated(EnumType.STRING) 
+    private Nationalites nationnalite;
+    
+    @Column(name="type_personne", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TypePersonnes typePersone;
+    
+    @Column(name = "antenne_agent", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AntenneAgents antenneAgent;
+    
+    @Column(name="sexe", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Sexes sexe;
+    
+    @Column(name="situation_matrimoniale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SituationMatrimoniales situationMatrimoniale;
+    
+    @Column(name="civilite", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Civilites civilite;
+    
+    @Column(name="role", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    private Roles role;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "division_id")
+    private Divisions division;
+
+    @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL) 
+    private List<Documents> documents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL) 
+    private List<Paiement> paiements = new ArrayList<>();
+
+    @OneToOne(mappedBy = "personne", cascade = CascadeType.ALL) 
+    private Utilisateurs utilisateur;
+    
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "entreprise_id")
+    private Entreprise entreprise;
+
+}
+
