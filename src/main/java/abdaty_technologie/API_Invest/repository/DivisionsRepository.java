@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import abdaty_technologie.API_Invest.Entity.Divisions;
@@ -20,6 +22,29 @@ public interface DivisionsRepository extends JpaRepository<Divisions, String> {
     
     // Recherche par type de division
     List<Divisions> findByDivisionType(DivisionType divisionType);
+    
+    // Recherche des régions (divisions sans parent)
+    List<Divisions> findByParentIsNullAndDivisionType(DivisionType divisionType);
+    
+    // Recherche des enfants d'une division (ex: cercles d'une région)
+    @Query("SELECT d FROM Divisions d WHERE d.parent.id = :parentId")
+    List<Divisions> findByParentId(@Param("parentId") String parentId);
+    
+    // Recherche des cercles d'une région
+    @Query("SELECT d FROM Divisions d WHERE d.parent.id = :regionId AND d.divisionType = 'CERCLE'")
+    List<Divisions> findCerclesByRegionId(@Param("regionId") String regionId);
+    
+    // Recherche des arrondissements d'un cercle
+    @Query("SELECT d FROM Divisions d WHERE d.parent.id = :cercleId AND d.divisionType = 'ARRONDISSEMENT'")
+    List<Divisions> findArrondissementsByCercleId(@Param("cercleId") String cercleId);
+    
+    // Recherche des communes d'un arrondissement
+    @Query("SELECT d FROM Divisions d WHERE d.parent.id = :arrondissementId AND d.divisionType = 'COMMUNE'")
+    List<Divisions> findCommunesByArrondissementId(@Param("arrondissementId") String arrondissementId);
+    
+    // Recherche des quartiers d'une commune
+    @Query("SELECT d FROM Divisions d WHERE d.parent.id = :communeId AND d.divisionType = 'QUARTIER'")
+    List<Divisions> findQuartiersByCommuneId(@Param("communeId") String communeId);
     
     // Vérifier l'existence par code
     boolean existsByCode(String code);
