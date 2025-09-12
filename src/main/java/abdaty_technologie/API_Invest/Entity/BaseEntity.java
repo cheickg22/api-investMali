@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +24,15 @@ public abstract class BaseEntity {
 
   @Column(name = "updated_at", nullable=false) 
   private Instant modification;
+
+  @PrePersist
+  protected void onCreate() {
+    creation = Instant.now();
+    modification = Instant.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    modification = Instant.now();
+  }
 }

@@ -1,17 +1,16 @@
 package abdaty_technologie.API_Invest.Entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-import abdaty_technologie.API_Invest.Entity.Enum.MobileMoney;
-import abdaty_technologie.API_Invest.Entity.Enum.TypePaiements;
-import jakarta.persistence.CascadeType;
+import abdaty_technologie.API_Invest.Entity.Enum.StatutPaiement;
+import abdaty_technologie.API_Invest.Entity.Enum.TypePaiement;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,24 +21,36 @@ public class Paiement extends BaseEntity {
 
     @Column(name="type_paiement", nullable = false)
     @Enumerated(EnumType.STRING) 
-    private TypePaiements typePaiement;
+    private TypePaiement typePaiement;
     
-    @Column(name="mobile_money", nullable = true)
+    @Column(name="statut", nullable = false)
     @Enumerated(EnumType.STRING) 
-    private MobileMoney mobileMoney; // nullable si non MOBILE_MONEY
+    private StatutPaiement statut = StatutPaiement.EN_ATTENTE;
     
     @Column(name = "montant", nullable = false, precision=18, scale=2) 
     private BigDecimal montant;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "entreprise_id")
+    @Column(name = "reference_transaction", unique = true)
+    private String referenceTransaction;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "date_paiement")
+    private LocalDateTime datePaiement;
+
+    @Column(name = "numero_telephone")
+    private String numeroTelephone; // Pour mobile money
+
+    @Column(name = "numero_compte")
+    private String numeroCompte; // Pour virements bancaires
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "entreprise_id", nullable = true)
     private Entreprise entreprise;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "personne_id")
     private Persons personne;
-
-    //GETTER AND SETTER
-    
 }
 

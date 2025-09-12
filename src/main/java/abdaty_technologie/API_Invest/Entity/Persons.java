@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import abdaty_technologie.API_Invest.Entity.Enum.AntenneAgents;
 import abdaty_technologie.API_Invest.Entity.Enum.Civilites;
 import abdaty_technologie.API_Invest.Entity.Enum.Nationalites;
 import abdaty_technologie.API_Invest.Entity.Enum.Roles;
 import abdaty_technologie.API_Invest.Entity.Enum.Sexes;
 import abdaty_technologie.API_Invest.Entity.Enum.SituationMatrimoniales;
-import abdaty_technologie.API_Invest.Entity.Enum.TypePersonnes;
+import abdaty_technologie.API_Invest.Entity.Enum.EntrepriseRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,16 +55,19 @@ public class Persons extends BaseEntity {
     @Column(name="lieu_naissance", nullable = false)
     private String lieuNaissance;
 
+    @Column(name="localite", nullable = true, length = 255)
+    private String localite;
+
     @Column(name="est_autoriser", nullable = false)
     private Boolean estAutoriser;
 
     @Column(name="nationalite", nullable = false)
     @Enumerated(EnumType.STRING) 
-    private Nationalites nationnalite;
+    private Nationalites nationalite;
     
-    @Column(name="type_personne", nullable = false)
+    @Column(name="entreprise_role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private TypePersonnes typePersone;
+    private EntrepriseRole entrepriseRole;
     
     @Column(name = "antenne_agent", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -88,12 +93,15 @@ public class Persons extends BaseEntity {
     @JoinColumn(name = "division_id")
     private Divisions division;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL) 
     private List<Documents> documents = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL) 
     private List<Paiement> paiements = new ArrayList<>();
 
+    @JsonIgnore
     @OneToOne(mappedBy = "personne", cascade = CascadeType.ALL) 
     private Utilisateurs utilisateur;
     

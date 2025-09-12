@@ -18,11 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import abdaty_technologie.API_Invest.Entity.Divisions;
 import abdaty_technologie.API_Invest.Entity.Enum.DivisionType;
+import abdaty_technologie.API_Invest.constants.Messages;
 import abdaty_technologie.API_Invest.repository.DivisionsRepository;
 import abdaty_technologie.API_Invest.service.IDivisionImportService;
 
+
 @RestController
-@RequestMapping("/api/divisions")
+@RequestMapping("/divisions")
 public class DivisionController {
 
     @Autowired
@@ -40,13 +42,13 @@ public class DivisionController {
             String result = divisionImportService.importDivisionsFromExcel(file);
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Erreur: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Messages.ERROR_PREFIX + e.getMessage());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erreur lors du traitement du fichier: " + e.getMessage());
+                    .body(Messages.FILE_PROCESSING_ERROR + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erreur interne: " + e.getMessage());
+                    .body(Messages.INTERNAL_ERROR + e.getMessage());
         }
     }
 

@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import abdaty_technologie.API_Invest.Entity.Divisions;
 import abdaty_technologie.API_Invest.Entity.Enum.DivisionType;
+import abdaty_technologie.API_Invest.constants.Messages;
+import abdaty_technologie.API_Invest.exception.BadRequestException;
 import abdaty_technologie.API_Invest.repository.DivisionsRepository;
 import abdaty_technologie.API_Invest.service.IDivisionImportService;
 
@@ -37,11 +39,11 @@ public class DivisionImportServiceImpl implements IDivisionImportService {
     @Override
     public String importDivisionsFromExcel(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Le fichier est vide");
+            throw new BadRequestException(Messages.FILE_EMPTY);
         }
 
         if (!isExcelFile(file)) {
-            throw new IllegalArgumentException("Le fichier doit être au format Excel (.xlsx)");
+            throw new BadRequestException(Messages.FILE_MUST_BE_EXCEL);
         }
 
         List<Divisions> divisionsToSave = new ArrayList<>();
@@ -110,7 +112,7 @@ public class DivisionImportServiceImpl implements IDivisionImportService {
             }
 
         } catch (IOException e) {
-            throw new IOException("Erreur lors de la lecture du fichier Excel: " + e.getMessage());
+            throw new IOException(Messages.FILE_READ_ERROR + e.getMessage());
         }
 
         return String.format("Import terminé: %d lignes traitées, %d divisions importées", 

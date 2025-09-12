@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import abdaty_technologie.API_Invest.Entity.Persons;
 import abdaty_technologie.API_Invest.Entity.Enum.Roles;
-import abdaty_technologie.API_Invest.Entity.Enum.TypePersonnes;
+import abdaty_technologie.API_Invest.Entity.Enum.EntrepriseRole;
 
 @Repository
 public interface PersonsRepository extends JpaRepository<Persons, String> {
@@ -31,7 +31,7 @@ public interface PersonsRepository extends JpaRepository<Persons, String> {
     List<Persons> findByRole(Roles role);
     
     // Recherche par type de personne
-    List<Persons> findByTypePersone(TypePersonnes typePersonne);
+    List<Persons> findByEntrepriseRole(EntrepriseRole entrepriseRole);
     
     // Recherche par entreprise
     @Query("SELECT p FROM Persons p WHERE p.entreprise.id = :entrepriseId")
