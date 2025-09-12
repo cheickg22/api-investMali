@@ -2,6 +2,7 @@ package abdaty_technologie.API_Invest.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Instant;
 
 import abdaty_technologie.API_Invest.Entity.Enum.DomaineActivites;
 import abdaty_technologie.API_Invest.Entity.Enum.EtapeValidation;
@@ -52,9 +53,8 @@ public class Entreprise extends BaseEntity {
   @Enumerated(EnumType.STRING) 
   private TypeEntreprise typeEntreprise;
   
-//   @Column(name="statut_societe", nullable = false, length = 50)
-//   @Enumerated(EnumType.STRING) 
-//   private EnumStatutSociete statutSociete;
+  @Column(name="statut_societe", nullable = false)
+  private Boolean StatutSociete;
   
   @Column(name="statut_creation", nullable = false, length = 50)
   @Enumerated(EnumType.STRING) 
@@ -72,8 +72,9 @@ public class Entreprise extends BaseEntity {
   @Enumerated(EnumType.STRING)  
   private DomaineActivites domaineActivite;
 
-  @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL)
-  private List<Persons> personne = new ArrayList<>();
+  // Relation membres via table de jointure EntrepriseMembre
+  @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<EntrepriseMembre> membres = new ArrayList<>();
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "division_id")
@@ -84,5 +85,15 @@ public class Entreprise extends BaseEntity {
   
   @OneToOne(mappedBy = "entreprise", cascade = CascadeType.ALL) 
   private Paiement paiement;
+
+  // Etat de bannissement
+  @Column(name="banni", nullable = false)
+  private Boolean banni = false;
+
+  @Column(name="motif_bannissement", length = 255)
+  private String motifBannissement;
+
+  @Column(name="date_bannissement")
+  private Instant dateBannissement;
 }
 

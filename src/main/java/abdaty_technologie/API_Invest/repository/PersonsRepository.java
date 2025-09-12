@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import abdaty_technologie.API_Invest.Entity.Persons;
 import abdaty_technologie.API_Invest.Entity.Enum.Roles;
-import abdaty_technologie.API_Invest.Entity.Enum.TypePersonnes;
 
 @Repository
 public interface PersonsRepository extends JpaRepository<Persons, String> {
@@ -30,16 +29,18 @@ public interface PersonsRepository extends JpaRepository<Persons, String> {
     // Recherche par rôle
     List<Persons> findByRole(Roles role);
     
-    // Recherche par type de personne
-    List<Persons> findByTypePersone(TypePersonnes typePersonne);
+    // (retiré) Recherche par type de personne: méthode supprimée, champ inexistant dans l'entité
     
-    // Recherche par entreprise
-    @Query("SELECT p FROM Persons p WHERE p.entreprise.id = :entrepriseId")
+    // Recherche par entreprise via la table de jointure EntrepriseMembre
+    @Query("SELECT p FROM Persons p JOIN EntrepriseMembre em ON em.personne = p WHERE em.entreprise.id = :entrepriseId")
     List<Persons> findByEntrepriseId(@Param("entrepriseId") String entrepriseId);
     
     // Recherche par division
     @Query("SELECT p FROM Persons p WHERE p.division.id = :divisionId")
     List<Persons> findByDivisionId(@Param("divisionId") String divisionId);
+
+    // Pagination par code de division
+    //Page<Persons> findByDivision_Code(String code, Pageable pageable);
     
     // Recherche des personnes autorisées
     List<Persons> findByEstAutoriser(Boolean estAutoriser);

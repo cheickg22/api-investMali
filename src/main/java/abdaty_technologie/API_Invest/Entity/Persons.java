@@ -6,11 +6,11 @@ import java.util.List;
 
 import abdaty_technologie.API_Invest.Entity.Enum.AntenneAgents;
 import abdaty_technologie.API_Invest.Entity.Enum.Civilites;
+import abdaty_technologie.API_Invest.Entity.Enum.EntrepriseRole;
 import abdaty_technologie.API_Invest.Entity.Enum.Nationalites;
 import abdaty_technologie.API_Invest.Entity.Enum.Roles;
 import abdaty_technologie.API_Invest.Entity.Enum.Sexes;
 import abdaty_technologie.API_Invest.Entity.Enum.SituationMatrimoniales;
-import abdaty_technologie.API_Invest.Entity.Enum.TypePersonnes;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,8 +37,7 @@ public class Persons extends BaseEntity {
     @NotEmpty
     private String prenom; 
     
-    @Column(name="email", nullable = false, unique = true)
-    @NotEmpty
+    @Column(name="email", nullable = true, unique = true)
     private String email;
     
     @Column(name="telephone1", nullable = false, unique = true)
@@ -60,11 +59,11 @@ public class Persons extends BaseEntity {
     @Enumerated(EnumType.STRING) 
     private Nationalites nationnalite;
     
-    @Column(name="type_personne", nullable = false)
+    @Column(name="entreprise_role", nullable = true)
     @Enumerated(EnumType.STRING)
-    private TypePersonnes typePersone;
+    private EntrepriseRole entrepriseRole;
     
-    @Column(name = "antenne_agent", nullable = false)
+    @Column(name = "antenne_agent", nullable = true)
     @Enumerated(EnumType.STRING)
     private AntenneAgents antenneAgent;
     
@@ -97,9 +96,9 @@ public class Persons extends BaseEntity {
     @OneToOne(mappedBy = "personne", cascade = CascadeType.ALL) 
     private Utilisateurs utilisateur;
     
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "entreprise_id")
-    private Entreprise entreprise;
+    // Liens d'appartenance à des entreprises via la table de jointure
+    @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EntrepriseMembre> entreprises = new ArrayList<>();
 
 }
 
