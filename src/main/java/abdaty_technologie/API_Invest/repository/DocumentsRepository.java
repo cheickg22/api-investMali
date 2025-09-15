@@ -21,7 +21,7 @@ public interface DocumentsRepository extends JpaRepository<Documents, String> {
     List<Documents> findByTypeDocument(TypeDocuments typeDocument);
     
     // Recherche par numéro de pièce
-    List<Documents> findByNumPiece(String numPiece);
+    List<Documents> findByNumero(String numero);
     
     // Recherche par personne
     @Query("SELECT d FROM Documents d WHERE d.personne.id = :personneId")
@@ -40,5 +40,5 @@ public interface DocumentsRepository extends JpaRepository<Documents, String> {
     List<Documents> findByTypeDocumentAndEntrepriseId(@Param("typeDocument") TypeDocuments typeDocument, @Param("entrepriseId") String entrepriseId);
     
     // Vérifier l'existence par numéro de pièce
-    boolean existsByNumPiece(String numPiece);
+    boolean existsByNumero(String numero);
 }

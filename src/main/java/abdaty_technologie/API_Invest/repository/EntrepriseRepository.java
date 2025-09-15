@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import abdaty_technologie.API_Invest.Entity.Entreprise;
 import abdaty_technologie.API_Invest.Entity.Enum.StatutCreation;
@@ -42,4 +44,17 @@ public interface EntrepriseRepository extends JpaRepository<Entreprise, String> 
     
     // Vérifier l'existence par sigle
     boolean existsBySigle(String sigle);
+
+    // Pagination par code de division
+    Page<Entreprise> findByDivision_Code(String code, Pageable pageable);
+
+    // Entreprises bannies (paginées)
+    Page<Entreprise> findByBanniTrue(Pageable pageable);
+
+    // Chargement avec fetch join des membres et des personnes pour le détail
+    @Query("SELECT e FROM Entreprise e " +
+           "LEFT JOIN FETCH e.membres em " +
+           "LEFT JOIN FETCH em.personne " +
+           "WHERE e.id = :id")
+    Optional<Entreprise> findByIdWithMembres(@Param("id") String id);
 }

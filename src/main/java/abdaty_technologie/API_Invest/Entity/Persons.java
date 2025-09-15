@@ -8,11 +8,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import abdaty_technologie.API_Invest.Entity.Enum.AntenneAgents;
 import abdaty_technologie.API_Invest.Entity.Enum.Civilites;
+import abdaty_technologie.API_Invest.Entity.Enum.EntrepriseRole;
 import abdaty_technologie.API_Invest.Entity.Enum.Nationalites;
 import abdaty_technologie.API_Invest.Entity.Enum.Roles;
 import abdaty_technologie.API_Invest.Entity.Enum.Sexes;
 import abdaty_technologie.API_Invest.Entity.Enum.SituationMatrimoniales;
+<<<<<<< HEAD
 import abdaty_technologie.API_Invest.Entity.Enum.EntrepriseRole;
+=======
+>>>>>>> origin/feature/EDP
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,8 +43,7 @@ public class Persons extends BaseEntity {
     @NotEmpty
     private String prenom; 
     
-    @Column(name="email", nullable = false, unique = true)
-    @NotEmpty
+    @Column(name="email", nullable = true, unique = true)
     private String email;
     
     @Column(name="telephone1", nullable = false, unique = true)
@@ -65,11 +68,15 @@ public class Persons extends BaseEntity {
     @Enumerated(EnumType.STRING) 
     private Nationalites nationalite;
     
+<<<<<<< HEAD
     @Column(name="entreprise_role", nullable = false)
+=======
+    @Column(name="entreprise_role", nullable = true)
+>>>>>>> origin/feature/EDP
     @Enumerated(EnumType.STRING)
     private EntrepriseRole entrepriseRole;
     
-    @Column(name = "antenne_agent", nullable = false)
+    @Column(name = "antenne_agent", nullable = true)
     @Enumerated(EnumType.STRING)
     private AntenneAgents antenneAgent;
     
@@ -105,9 +112,9 @@ public class Persons extends BaseEntity {
     @OneToOne(mappedBy = "personne", cascade = CascadeType.ALL) 
     private Utilisateurs utilisateur;
     
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "entreprise_id")
-    private Entreprise entreprise;
+    // Liens d'appartenance à des entreprises via la table de jointure
+    @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EntrepriseMembre> entreprises = new ArrayList<>();
 
 }
 
